@@ -5,8 +5,7 @@
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
 
-
-db = DAL('mysql://mark:mark@rbzlnet.no-ip.org/pbstestdb')
+db = DAL(settings.database_uri)
 
 ## none otherwise. a pattern can be 'controller/function.extension'
 response.generic_patterns = ['*'] if request.is_local else []
