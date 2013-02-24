@@ -4,8 +4,8 @@ pbs_site
 PBS radio tower status website
 
 To install:
-
-Linux and Unix
+-----------
+**Linux and Unix**
 
 One step production deployment
 Here are some steps to install apache+python+mod_wsgi+web2py+postgresql from scratch.
