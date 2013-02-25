@@ -5,6 +5,8 @@
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
 
+from gluon.storage import Storage
+settings = Storage()
 db = DAL(settings.database_uri)
 
 ## none otherwise. a pattern can be 'controller/function.extension'
