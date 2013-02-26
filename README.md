@@ -35,4 +35,6 @@ Google Maps
 -----------
 
 The script used to display googlemaps is called gmaps.js and is located in the static/js directory.  A detailed explanation of its usage is found at http://hpneo.github.com/gmaps/
+
+
 ![screenshot](https://raw.github.com/pf4d/pbs_site/master/doc/images/pbs_site.png)
