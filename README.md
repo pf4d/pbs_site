@@ -30,3 +30,8 @@ Once this is installed, you can go to https://localhost, click "admin interface"
 
 Full documentation on deployment found here:
 http://web2py.com/books/default/chapter/29/13
+
+Google Maps
+-----------
+
+The script used to display googlemaps is called gmaps.js and is located in the static/js directory.  A detailed explanation of its usage is found at http://hpneo.github.com/gmaps/
