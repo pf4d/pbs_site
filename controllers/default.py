@@ -22,3 +22,18 @@ def index():
 def error():
     return dict()
 
+def myplot():
+    response.headers['Content-Type']='image/png'
+    return plot(data={'my plot':[(0,0),(1,1),(2,4),(3,9),(4,16)]})
+
+def first():
+    return dict()
+
+def second():
+    return dict()
+
+def myhist():
+    response.headers['Content-Type']='image/png'
+    return hist()
+
+
