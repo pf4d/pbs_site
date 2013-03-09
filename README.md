@@ -3,11 +3,24 @@ pbs_site
 
 PBS radio tower status website
 !
-To install:
------------
+To install web2py and pbs_site:
+-------------------------------
 **Linux and Unix**
 
+Here is a good explanation of how to install web2py:
+http://jdoe.asidev.com/2009/02/26/configure-web2py-to-run-behind-apache-with-wsgi-mod_wsgi/
+
+
+To install pbs_site, clone the repository, then tar the files like so:
+```bash
+cd applications/pbs_site
+tar zcvf web2py.app.name.w2p *
+```
+Then install the "packed" application in the web2py admin interface.  Afther this, you will be able to perform all the necessary commits and such that you need.
+
+
 One step production deployment
+------------------------------
 Here are some steps to install apache+python+mod_wsgi+web2py+postgresql from scratch.
 
 On Ubuntu:
