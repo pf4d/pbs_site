@@ -32,6 +32,10 @@ def first():
 def second():
     return dict()
 
+def d3test():
+    mac  = db().select(db.device.ALL, orderby=db.device.MACAddress) 
+    return dict(mac=mac)
+
 def myhist():
     response.headers['Content-Type']='image/png'
     return hist()

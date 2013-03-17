@@ -5,9 +5,8 @@
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
 
-from gluon.storage import Storage
-settings = Storage()
-db = DAL(settings.database_uri)
+from dbaccess import *
+db = DAL(database_uri)
 
 ## none otherwise. a pattern can be 'controller/function.extension'
 response.generic_patterns = ['*'] if request.is_local else []
@@ -133,6 +132,7 @@ db.define_table('device',
     Field('LoginPW','string'),
     Field('Status','string'),
     Field('Site','integer'),
+    primarykey=['MACAddress'],
     migrate=False)
 
 #--------
@@ -143,6 +143,7 @@ db.define_table('device_log',
     Field('LogInfo','text'),
     Field('LogDateTime','datetime'),
     Field('CritVals','text'),
+    primarykey=['LogID'],
     migrate=False)
 
 #--------
@@ -150,6 +151,7 @@ db.define_table('engineer_info',
     Field('Person','integer'),
     Field('SID','integer'),
     Field('ContRenewDate','date'),
+    primarykey=['Person', 'SID'],
     migrate=False)
 
 #--------
@@ -162,6 +164,7 @@ db.define_table('lease',
     Field('Address','string'),
     Field('Site','integer'),
     Field('LEASEcol','string'),
+    primarykey=['LeaseID'],
     migrate=False)
 
 #--------
@@ -171,12 +174,14 @@ db.define_table('maintenance_log',
     Field('EngID','integer'),
     Field('Date','string'),
     Field('Report','string'),
+    primarykey=['MaintenanceID'],
     migrate=False)
 
 #--------
 db.define_table('maintenance_log_has_device',
     Field('MaintID','integer'),
     Field('DeviceID','string'),
+    primarykey=['MaintID', 'DeviceID'],
     migrate=False)
 
 #--------
@@ -191,6 +196,7 @@ db.define_table('person',
     Field('Status','string'),
     Field('PassHash','string'),
     Field('Seed','string'),
+    primarykey=['PersonID'],
     migrate=False)
 
 #--------
@@ -203,12 +209,14 @@ db.define_table('site',
     Field('Elevation','string'),
     Field('Callsign','string'),
     Field('Description','string'),
+    primarykey=['SiteID'],
     migrate=False)
 
 #--------
 db.define_table('site_has_utility',
     Field('Site','integer'),
     Field('Utility','integer'),
+    primarykey=['Site', 'Utility'],
     migrate=False)
 
 #--------
@@ -220,6 +228,7 @@ db.define_table('utility',
     Field('Phone','string'),
     Field('Address','string'),
     Field('AccNum','string'),
+    primarykey=['UtilityID'],
     migrate=False)
 
 ## after defining tables, uncomment below to enable auditing
