@@ -33,8 +33,17 @@ def second():
     return dict()
 
 def d3test():
-    mac  = db().select(db.device.ALL, orderby=db.device.MACAddress) 
-    return dict(mac=mac)
+    rows = db().select(db.device_log.ALL, orderby=db.device_log.DeviceID)
+    a    = []
+    b    = []
+    c    = []
+    for row in rows:
+      vals = row.CritVals
+      vals = map(int, vals.split(','))
+      a.append(vals[0])
+      b.append(vals[1])
+      c.append(vals[2])
+    return dict(rows=rows, a=a, b=b, c=c)
 
 def myhist():
     response.headers['Content-Type']='image/png'
