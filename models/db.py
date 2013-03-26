@@ -6,7 +6,7 @@
 # request.requires_https()
 
 from dbaccess import *
-db = DAL(database_uri)
+db = DAL(database_uri, migrate=False)
 
 ## none otherwise. a pattern can be 'controller/function.extension'
 response.generic_patterns = ['*'] if request.is_local else []
@@ -26,6 +26,8 @@ response.generic_patterns = ['*'] if request.is_local else []
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
 auth = Auth(db)
+auth.settings.extra_fields['auth_user'] = [Field('username')]
+auth.define_tables(migrate=False, username=True)
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
 ## create all tables needed by auth if not custom tables
@@ -35,12 +37,13 @@ crud, service, plugins = Crud(db), Service(), PluginManager()
 mail = auth.settings.mailer
 mail.settings.server = 'logging' or 'smtp.gmail.com:587'
 mail.settings.sender = 'you@gmail.com'
-mail.settings.login = 'username:password'
+mail.settings.login  = 'username:password'
 
 ## configure auth policy
-auth.settings.registration_requires_verification = False
-auth.settings.registration_requires_approval = False
+auth.settings.registration_requires_verification   = False
+auth.settings.registration_requires_approval       = False
 auth.settings.reset_password_requires_verification = True
+auth.settings.create_user_groups                   = False
 
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
@@ -64,61 +67,54 @@ use_janrain(auth, filename='private/janrain.key')
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
-db.define_table('auth_cas',
-    Field('id','integer'),
-    Field('user_id','integer'),
-    Field('created_on','datetime'),
-    Field('service','string'),
-    Field('ticket','string'),
-    Field('renew','string'),
-    migrate=False)
-
+#db.define_table('auth_cas',
+#    Field('id','integer'),
+#    Field('user_id','integer'),
+#    Field('created_on','datetime'),
+#    Field('service','string'),
+#    Field('ticket','string'),
+#    Field('renew','string'))
+#
+##--------
+#db.define_table('auth_event',
+#    Field('id','integer'),
+#    Field('time_stamp','datetime'),
+#    Field('client_ip','string'),
+#    Field('user_id','integer'),
+#    Field('origin','string'))
+#
+##--------
+#db.define_table('auth_group',
+#    Field('id','integer'),
+#    Field('role','string'),
+#    Field('description','text'))
+#
+##--------
+#db.define_table('auth_membership',
+#    Field('id','integer'),
+#    Field('user_id','integer'),
+#    Field('group_id','integer'))
+#
+##--------
+#db.define_table('auth_permission',
+#    Field('id','integer'),
+#    Field('group_id','integer'),
+#    Field('name','string'),
+#    Field('table_name','string'),
+#    Field('record_id','integer'))
+#
+##--------
+#db.define_table('auth_user',
+#    Field('id','integer'),
+#    Field('first_name','string'),
+#    Field('last_name','string'),
+#    Field('email','string'),
+#    Field('password','string'),
+#    Field('registration_key','string'),
+#    Field('reset_password_key','string'),
+#    Field('registration_id','string'))
 #--------
-db.define_table('auth_event',
-    Field('id','integer'),
-    Field('time_stamp','datetime'),
-    Field('client_ip','string'),
-    Field('user_id','integer'),
-    Field('origin','string'),
-    Field('description','text'),
-    migrate=False)
 
-#--------
-db.define_table('auth_group',
-    Field('id','integer'),
-    Field('role','string'),
-    Field('description','text'),
-    migrate=False)
-
-#--------
-db.define_table('auth_membership',
-    Field('id','integer'),
-    Field('user_id','integer'),
-    Field('group_id','integer'),
-    migrate=False)
-
-#--------
-db.define_table('auth_permission',
-    Field('id','integer'),
-    Field('group_id','integer'),
-    Field('name','string'),
-    Field('table_name','string'),
-    Field('record_id','integer'),
-    migrate=False)
-
-#--------
-db.define_table('auth_user',
-    Field('id','integer'),
-    Field('first_name','string'),
-    Field('last_name','string'),
-    Field('email','string'),
-    Field('password','string'),
-    Field('registration_key','string'),
-    Field('reset_password_key','string'),
-    Field('registration_id','string'),
-    migrate=False)
-
-#--------
 db.define_table('device',
     Field('MACAddress','string'),
     Field('SerialNo','string'),
@@ -132,8 +128,7 @@ db.define_table('device',
     Field('LoginPW','string'),
     Field('Status','string'),
     Field('Site','integer'),
-    primarykey=['MACAddress'],
-    migrate=False)
+    primarykey=['MACAddress'])
 
 #--------
 db.define_table('device_log',
@@ -143,16 +138,14 @@ db.define_table('device_log',
     Field('LogInfo','text'),
     Field('LogDateTime','datetime'),
     Field('CritVals','text'),
-    primarykey=['LogID'],
-    migrate=False)
+    primarykey=['LogID'])
 
 #--------
 db.define_table('engineer_info',
     Field('Person','integer'),
     Field('SID','integer'),
     Field('ContRenewDate','date'),
-    primarykey=['Person', 'SID'],
-    migrate=False)
+    primarykey=['Person', 'SID'])
 
 #--------
 db.define_table('lease',
@@ -164,8 +157,7 @@ db.define_table('lease',
     Field('Address','string'),
     Field('Site','integer'),
     Field('LEASEcol','string'),
-    primarykey=['LeaseID'],
-    migrate=False)
+    primarykey=['LeaseID'])
 
 #--------
 db.define_table('maintenance_log',
@@ -174,15 +166,13 @@ db.define_table('maintenance_log',
     Field('EngID','integer'),
     Field('Date','string'),
     Field('Report','string'),
-    primarykey=['MaintenanceID'],
-    migrate=False)
+    primarykey=['MaintenanceID'])
 
 #--------
 db.define_table('maintenance_log_has_device',
     Field('MaintID','integer'),
     Field('DeviceID','string'),
-    primarykey=['MaintID', 'DeviceID'],
-    migrate=False)
+    primarykey=['MaintID', 'DeviceID'])
 
 #--------
 db.define_table('person',
@@ -196,8 +186,7 @@ db.define_table('person',
     Field('Status','string'),
     Field('PassHash','string'),
     Field('Seed','string'),
-    primarykey=['PersonID'],
-    migrate=False)
+    primarykey=['PersonID'])
 
 #--------
 db.define_table('site',
@@ -209,15 +198,13 @@ db.define_table('site',
     Field('Elevation','string'),
     Field('Callsign','string'),
     Field('Description','string'),
-    primarykey=['SiteID'],
-    migrate=False)
+    primarykey=['SiteID'])
 
 #--------
 db.define_table('site_has_utility',
     Field('Site','integer'),
     Field('Utility','integer'),
-    primarykey=['Site', 'Utility'],
-    migrate=False)
+    primarykey=['Site', 'Utility'])
 
 #--------
 db.define_table('utility',
@@ -228,8 +215,7 @@ db.define_table('utility',
     Field('Phone','string'),
     Field('Address','string'),
     Field('AccNum','string'),
-    primarykey=['UtilityID'],
-    migrate=False)
+    primarykey=['UtilityID'])
 
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)

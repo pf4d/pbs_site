@@ -7,6 +7,5 @@ response.menu = [
 (T('Index'),URL('default','index')==URL(),URL('default','index'),[]),
 (T('myplot'),URL('default','myplot')==URL(),URL('default','myplot'),[]),
 (T('myhist'),URL('default','myhist')==URL(),URL('default','myhist'),[]),
-(T('first'),URL('default','first')==URL(),URL('default','first'),[]),
 (T('d3test'),URL('default','d3test')==URL(),URL('default','d3test'),[]),
 ]

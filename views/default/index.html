@@ -8,7 +8,7 @@
 </div>
 {{if longitude or latitude:}}
 <p>latitude, longtitude: {{=latitude}},{{=longitude}}</p>
-<div id="map" style="height:400px;width:800px"></div>
+<div id="map" style="height:400px;width:600px"></div>
 <script>
 $(document).ready(function(){
   map = new GMaps({
@@ -26,4 +26,6 @@ $(document).ready(function(){
   });
 });
 </script>
+
+<h2>Number of visits: {{=counter}}</h2>
 {{pass}}

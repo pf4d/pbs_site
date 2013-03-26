@@ -17,7 +17,13 @@ def index():
     (latitude, longitude) = geocode(address)
   else:
     (latitude, longitude) = ('','')
-  return dict(form=form, latitude=latitude, longitude=longitude)
+
+  if not session.counter:
+    session.counter = 1
+  else:
+    session.counter += 1
+  return dict(form=form, latitude=latitude, longitude=longitude, 
+              counter=session.counter)
 
 def error():
     return dict()
@@ -26,12 +32,12 @@ def myplot():
     response.headers['Content-Type']='image/png'
     return plot(data={'my plot':[(0,0),(1,1),(2,4),(3,9),(4,16)]})
 
-def first():
-    return dict()
+def myhist():
+    response.headers['Content-Type']='image/png'
+    return hist()
 
-def second():
-    return dict()
-
+@auth.requires_login()
+@auth.requires_membership('engineer')
 def d3test():
     rows = db().select(db.device_log.ALL, orderby=db.device_log.DeviceID)
     a    = []
@@ -44,9 +50,5 @@ def d3test():
       b.append(vals[1])
       c.append(vals[2])
     return dict(rows=rows, a=a, b=b, c=c)
-
-def myhist():
-    response.headers['Content-Type']='image/png'
-    return hist()
 
 
