@@ -1,0 +1,112 @@
+{{response.files.append(URL(r=request,c='static',f='/js/d3/d3.js'))}}
+{{extend 'layout.html'}}
+
+<style>
+      /* tell the SVG path to be a thin blue line without any area fill */
+      path {
+        stroke: steelblue;
+        stroke-width: 1;
+        fill: none;
+      }
+      
+      .axis {
+        shape-rendering: crispEdges;
+      }
+
+      .x.axis line {
+        stroke: lightgrey;
+      }
+
+      .x.axis .minor {
+        stroke-opacity: .5;
+      }
+
+      .x.axis path {
+        display: none;
+      }
+
+      .y.axis line, .y.axis path {
+        fill: none;
+        stroke: #000;
+      }
+</style>
+
+<h1>d3.js plots</h1>
+<c1></c1>
+<br/>
+<c2></c2>
+<br/>
+<c3></c3>
+<script type="text/javascript">
+  Array.max = function( array )
+  {
+      return Math.max.apply( Math, array );
+  };
+ 
+  Array.min = function( array )
+  {
+       return Math.min.apply( Math, array );
+  };
+
+  // throughput plotting :
+  var m = [100, 100, 100, 100];
+  var w = 800 - m[1] - m[3];
+  var h = 500 - m[0] - m[2];
+  var barPadding = 1;
+  
+  var data = {{=XML(response.json(dp))}}
+  //var max  = {{=XML(response.json(max(dp)))}}
+  //var min  = {{=XML(response.json(min(dp)))}}
+  var l    = data.length;
+  
+  // data :
+  for(var i = 0; i < l; i++)
+  {
+    var dd   = new Array(new Array(data[i].length), data[i]);
+    var dmax = Math.max.apply(null,data[i]);
+    var dmin = Math.min.apply(null,data[i]);
+    var dl   = dd[0].length;
+    for(var j = 0; j < dl; j++)
+    {
+      dd[0][j] = j;
+    }
+    
+
+    var x = d3.scale.linear().domain([0, dl]).range([0,w]);
+    var y = d3.scale.linear().domain([dmin, dmax]).range([h,0]);
+    
+    var line = d3.svg.line()
+                 .x(function(d){return x(d[0]);})
+                 .y(function(d){return y(d[1]);})
+    
+    var graph = d3.select("c1")
+                  .append("svg")
+                    .attr("width",  w + m[1] + m[3])
+                    .attr("height", h + m[0] + m[2])
+                  .append("g")
+                    .attr("transform", "translate(" + m[3] + "," + m[0] + ")");
+    
+    var xAxis = d3.svg.axis().scale(x).tickSize(-h).tickSubdivide(true);
+    
+    graph.append("g")
+         .attr("class", "x axis")
+         .attr("transform", "translate(0," + h + ")")
+         .call(xAxis);
+
+    var yAxisLeft = d3.svg.axis().scale(y).ticks(4).orient("left");
+
+    graph.append("g")
+         .attr("class", "y axis")
+         .attr("transform", "translate(-25,0)")
+         .call(yAxisLeft);
+
+    graph.append("svg:path").attr("d", line(dd));
+  }
+</script>
+<ul>
+<!--
+{{for row in rows:}}
+{{=LI(row.CritVals)}}
+{{pass}}
+-->
+</ul>

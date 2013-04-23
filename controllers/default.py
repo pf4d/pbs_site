@@ -26,29 +26,26 @@ def index():
               counter=session.counter)
 
 def error():
-    return dict()
+  return dict()
 
-def myplot():
-    response.headers['Content-Type']='image/png'
-    return plot(data={'my plot':[(0,0),(1,1),(2,4),(3,9),(4,16)]})
-
-def myhist():
-    response.headers['Content-Type']='image/png'
-    return hist()
+def sites():
+  rows = db().select(db.site.SiteID)
+  return dict(rows=rows)  
 
 @auth.requires_login()
 @auth.requires_membership('engineer')
-def d3test():
-    rows = db().select(db.device_log.ALL, orderby=db.device_log.DeviceID)
-    a    = []
-    b    = []
-    c    = []
+def logInfo():
+  site = request.args(0,cast=int)
+  device = db(db.device.Site == site).select() or redirect(URL('sites'))
+  devicePackets = []
+  for d in device:
+    rows = db(db.device_log.DeviceID == d.MACAddress).select(db.device_log.ALL, orderby=db.device_log.DeviceID)
+    packets = []
     for row in rows:
       vals = row.CritVals
       vals = map(int, vals.split(','))
-      a.append(vals[0])
-      b.append(vals[1])
-      c.append(vals[2])
-    return dict(rows=rows, a=a, b=b, c=c)
+      packets.append(vals[0])
+    devicePackets.append(packets)
+  return dict(rows=rows, dp=devicePackets)
 
 

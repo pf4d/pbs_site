@@ -1,0 +1,7 @@
+{{extend 'layout.html'}}
+<h1>Select a Site</h1>
+<ul>
+{{for row in rows:}}
+{{=LI(A(row.SiteID, _href=URL("logInfo", args=row.SiteID)))}}
+{{pass}}
+</ul>
