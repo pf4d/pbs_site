@@ -35,17 +35,26 @@ def sites():
 @auth.requires_login()
 @auth.requires_membership('engineer')
 def logInfo():
-  site = request.args(0,cast=int)
+  site   = request.args(0,cast=int)
   device = db(db.device.Site == site).select() or redirect(URL('sites'))
   devicePackets = []
+  info   = []
+  dlist  = []
+  # for each available device, give the critical values :
   for d in device:
+    dlist.append(d.MACAddress)
     rows = db(db.device_log.DeviceID == d.MACAddress).select(db.device_log.ALL, orderby=db.device_log.DeviceID)
     packets = []
+    first = True
     for row in rows:
+      # provide the latest batch of info :
+      if first:
+        info.append(row.LogInfo)
+        first = False
       vals = row.CritVals
       vals = map(int, vals.split(','))
       packets.append(vals[0])
     devicePackets.append(packets)
-  return dict(rows=rows, dp=devicePackets)
+  return dict(dlist=dlist, rows=rows, dp=devicePackets, info=info)
 
 
