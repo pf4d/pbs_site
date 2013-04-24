@@ -32,6 +32,11 @@ def sites():
   rows = db().select(db.site.SiteID)
   return dict(rows=rows)  
 
+@auth.requires_membership('admin')
+def manage():
+  grid = SQLFORM.smartgrid(db.auth_membership,linked_tables=['post'])
+  return dict(grid=grid)
+
 @auth.requires_login()
 @auth.requires_membership('engineer')
 def logInfo():
