@@ -62,4 +62,39 @@ def logInfo():
     devicePackets.append(packets)
   return dict(dlist=dlist, rows=rows, dp=devicePackets, info=info)
 
+def index():
+    raw_err = db.executesql('SELECT DISTINCT Site FROM device_log JOIN device ON device.MACAddress = device_log.DeviceID'
+        + ' WHERE LogDateTime >= SYSDATE() - INTERVAL 1 DAY AND Tag = "ERROR";')
+    err = []
+    for i in raw_err:
+      err.append(int(i[0]))
+    rows = db(db.site).select()
+    lats = []
+    lngs = []
+    site = []
+    name = []
+    baseInt = 0
+    erLat = []
+    erLng = []
+    erSite = []
+    erName = []
+    erNum = 0
+    workingNum = 0
+    for row in rows:
+      if row.SiteID in err:
+        erLat.append(row.Latitude)
+        erLng.append(row.Longitude)
+        erSite.append(row.SiteID)
+        erName.append(row.Name)
+        erNum = erNum+1
+      else:
+        lats.append(row.Latitude)
+        lngs.append(row.Longitude)
+        site.append(row.SiteID)
+        name.append(row.Name)
+        workingNum = workingNum+1
+
+    return dict(lats=lats,lngs=lngs,site=site,name=name,err=err,baseInt=baseInt,erLat=erLat,erLng=erLng,erSite=erSite,erName=erName,
+                workingNum=workingNum,erNum=erNum)
+                                                                                                                              98,1          Bot
 
