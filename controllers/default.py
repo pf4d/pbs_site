@@ -96,5 +96,4 @@ def index():
 
     return dict(lats=lats,lngs=lngs,site=site,name=name,err=err,baseInt=baseInt,erLat=erLat,erLng=erLng,erSite=erSite,erName=erName,
                 workingNum=workingNum,erNum=erNum)
-                                                                                                                              98,1          Bot
-
+                                                                                                                             
