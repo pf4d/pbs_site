@@ -4,7 +4,7 @@ def user(): return dict(form=auth())
 def download(): return response.download(request,db)
 def call(): return service()
 ### end requires
-
+'''
 def index():
   from gluon.tools import geocode
   latitude = longtitude = ''
@@ -24,7 +24,7 @@ def index():
     session.counter += 1
   return dict(form=form, latitude=latitude, longitude=longitude, 
               counter=session.counter)
-
+'''
 def error():
   return dict()
 
