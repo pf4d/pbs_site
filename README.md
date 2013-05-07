@@ -13,10 +13,10 @@ http://jdoe.asidev.com/2009/02/26/configure-web2py-to-run-behind-apache-with-wsg
 
 I was not able to install pbs_site by providing the git URL, but have installed it successfully as follows:  First, clone the repository into a temp directory, then tar the files like so:
 ```bash
-cd temp/pbs_site
+cd temp_dir/pbs_site
 tar zcvf web2py.app.name.w2p *
 ```
-Then install the "packed" application in the web2py admin interface.  Afther this, remove the directory ```applications/pbs_site``` and copy the ```pbs_site``` directory from ```temp``` into the ```applications``` directory.  You will now be able to perform all the necessary commits and such that you need.
+Then install the "packed" application in the web2py admin interface.  Afther this, remove the directory ```applications/pbs_site``` and copy the ```pbs_site``` directory from ```temp_dir``` into the ```applications``` directory where you just deleted the ```pbs_site``` folder.  You will now be able to perform all the necessary commits and such that you need.
 
 
 One step production deployment
