@@ -6,24 +6,37 @@ def call(): return service()
 ### end requires
 
 def index():
-  from gluon.tools import geocode
-  latitude = longtitude = ''
-  form=SQLFORM.factory(Field('search'), _class='form-search')
-  form.custom.widget.search['_class'] = 'input-long search-query'
-  form.custom.submit['_value'] = 'Search'
-  form.custom.submit['_class'] = 'btn'
-  if form.accepts(request):
-    address=form.vars.search
-    (latitude, longitude) = geocode(address)
-  else:
-    (latitude, longitude) = ('','')
+  raw_err = db.executesql('SELECT DISTINCT Site FROM device_log JOIN device ON device.MACAddress = device_log.DeviceID  WHERE LogDateTime >= SYSDATE() - INTERVAL 1 DAY AND Tag = "ERROR";')
+  err = []
+  for i in raw_err:
+    err.append(int(i[0]))
+  rows = db(db.site).select()
+  lats = []
+  lngs = []
+  site = []
+  name = []
+  baseInt = 0
+  erLat = []
+  erLng = []
+  erSite = []
+  erName = []
+  erNum = 0
+  workingNum = 0
+  for row in rows:
+    if row.SiteID in err:
+      erLat.append(row.Latitude)
+      erLng.append(row.Longitude)
+      erSite.append(row.SiteID)
+      erName.append(row.Name)
+      erNum = erNum+1
+    else:
+      lats.append(row.Latitude)
+      lngs.append(row.Longitude)
+      site.append(row.SiteID)
+      name.append(row.Name)
+      workingNum = workingNum+1
 
-  if not session.counter:
-    session.counter = 1
-  else:
-    session.counter += 1
-  return dict(form=form, latitude=latitude, longitude=longitude, 
-              counter=session.counter)
+  return dict(lats=lats,lngs=lngs,site=site,name=name,err=err,baseInt=baseInt,erLat=erLat,erLng=erLng,erSite=erSite,erName=erName, workingNum=workingNum,erNum=erNum)
 
 def error():
   return dict()

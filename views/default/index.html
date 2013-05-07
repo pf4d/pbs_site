@@ -1,69 +1,73 @@
 {{extend 'layout.html'}}
-  <script src="http://maps.google.com/maps/api/js?sensor=false" 
-          type="text/javascript"></script>
-  <div id="map" style="width: 600px; height: 400px;"></div>
-  <script type="text/javascript">
-  //adapted from gmapSites.html by Tony Matts
-  //Places markers onto a Google Map. Color indicates status.
-  //Green = Online
-  //Red = Offline
-  //markers also serve as link to each one's diagnostic page.
-    
-  //To add a location: increase locNum variable by number of locations being added.
-  //place location name, latitude, longitude, and (locNum-1) at bottom of list for each
-  //location. Template available below last locations (DON'T delete it).
-  var locNum = 10
-  var locations = [
-      ['Big Sky Mtn {KUFM 89.1 Missoula Transmitter}', 47.03243, -113.99243, locNum],
-      ['Bozeman CCI US-Bank {KUSM Off Air}', 45.6793, -111.0356, (locNum-1)],
-      ['Dillon {K219DN 91.7 FM Dillon Translator}', 45.20907, -112.63829, (locNum-1)],
-      ['Grubsteak {KUFN 91.9 FM Hamilton Transmitter}', 46.23004, -114.23649, (locNum-1)],
-      ['Jette Peak {KPJH 89.5 FM Polson Transmitter}', 47.77357, -114.2688, (locNum-1)],
-      ['Dean Stone {KUFM-TV 11 Missoula Transmitter}', 46.80235, -113.97354, (locNum-1)],
-      ['FAA Peak {KUKL 90.1 FM Kalispell Transmitter}', 48.5061, -114.348, (locNum-1)],
-      ['Lone Pine {K219BN 91.7 FM Whitefish Translator}', 48.176036, -114.34995, (locNum-1)],
-      ['North Hill {KUHM 91.7 FM Helena Transmitter}', 46.769682, -112.023685, (locNum-1)],
-      ['XL Heights {KAPC 91.3 FM Butte Transmitter}', 46.007511, -112.442550, (locNum-1)],
-     // ['LOCATION', LATITUDE, LONGITUDE, (locNum-1)],
-    ];
+<script src="http://maps.google.com/maps/api/js?sensor=false" 
+          type="text/javascript"></script>
+<div id="map" style="width: 600px; height: 400px;"></div>
+<script type="text/javascript">
+//adapted from gmapSites.html by Tony Matts
+//Places markers onto a Google Map. Color indicates status.
+//Green = Online
+//Red = Offline
+//markers may also serve as link to each one's diagnostic page.
+    
+//To add a location: increase locNum variable by number of locations being added.
+//place location name, latitude, and longitude at bottom of list for each
+//location. Template available below last locations (DON'T delete it).
+var workingSites = new Array();
+var errorSites = new Array();
+var i=0;
 
-    var map = new google.maps.Map(document.getElementById('map'), {
-      zoom: 6,
-      center: new google.maps.LatLng(47.532038, -112.281494),
-      mapTypeId: google.maps.MapTypeId.ROADMAP
-    });
-
-    var infowindow = new google.maps.InfoWindow();
-
-    var marker;
-    var status = true;
-
-
-    for (var i = 0; i < locations.length; i++) {  
-      marker = new google.maps.Marker({
-        position: new google.maps.LatLng(locations[i][1], locations[i][2]),
-        map: map,
-        url: 'http://www.montanapbs.org'
-      });
-
-      //google.maps.event.addListener(marker, 'mouseover', (function(marker, i) {
-      google.maps.event.addListener(marker, 'click', (function(marker, i) {
-        return function() {
-          //infowindow.setContent(locations[i][0]);
-          //infowindow.open(map, marker);
-          window.location.href = marker.url;
-        }
-      })(marker, i));  
-
-          //--Code for grabbing from database goes here--
-        
-      if (status) {
-                  marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')
-      }
-      else {
-                  marker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')
-      }
-    }
-</script>
+{{while baseInt < workingNum:}}
+workingSites[i] = ['{{=name[baseInt]}}', {{=lats[baseInt]}}, {{=lngs[baseInt]}}];
+{{baseInt=baseInt+1}}
+i=i+1;
 {{pass}}
 
+{{baseInt=0}}
+
+i=0;
+{{while baseInt < erNum:}}
+errorSites[i] = ['{{=erName[baseInt]}}', {{=erLat[baseInt]}}, {{=erLng[baseInt]}}];
+{{baseInt=baseInt+1}}
+i=i+1;
+{{pass}}
+
+var map = new google.maps.Map(document.getElementById('map'), {
+        zoom: 6,
+        center: new google.maps.LatLng(47.532038, -112.281494),
+        mapTypeId: google.maps.MapTypeId.ROADMAP
+});
+
+var infowindow = new google.maps.InfoWindow();
+var marker;
+
+for (var i = 0; i < workingSites.length; i++) {  
+        marker = new google.maps.Marker({
+        position: new google.maps.LatLng(workingSites[i][1], workingSites[i][2]),
+        map: map,
+        url: 'http://www.montanapbs.org'
+});
+
+//google.maps.event.addListener(marker, 'mouseover', (function(marker, i) {
+google.maps.event.addListener(marker, 'click', (function(marker, i) {
+        return function() {
+        infowindow.setContent(workingSites[i][0]);
+        infowindow.open(map, marker);
+        //window.location.href = marker.url;
+        }
+})(marker, i));  
+
+marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')               
+}
+
+var errorMarker;
+for (var i = 0; i < errorSites.length; i++) {  
+        errorMarker = new google.maps.Marker({
+        position: new google.maps.LatLng(errorSites[i][1], errorSites[i][2]),
+        map: map,
+        url: 'http://www.montanapbs.org'
+}); 
+
+errorMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')               
+}
+</script>
+{{pass}}
