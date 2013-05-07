@@ -34,25 +34,50 @@ def sites():
 
 @auth.requires_membership('admin')
 def manage():
+  # web2py has a nifty smart grid for editing info from the database.
   grid = SQLFORM.smartgrid(db.auth_membership,linked_tables=['post'])
   return dict(grid=grid)
 
 @auth.requires_login()
 @auth.requires_membership('engineer')
 def logInfo():
+  
+  # site from link clicked in default/views/sites.html link :
   site   = request.args(0,cast=int)
+
+  # get a dict of all devices associated with the site :
   device = db(db.device.Site == site).select() or redirect(URL('sites'))
-  devicePackets = []
-  info   = []
-  dlist  = []
+
+  # get a list of logs for the site ordered by date:
+  logs   = db().select(db.maintenance_log.ALL, orderby=db.maintenance_log.Date)
+ 
+  devicePackets = [] # total packets sent 
+  info          = [] # current info on device
+  dlist         = [] # list of device names (MAC addresses)
+
+  # log input default values :
+  db.maintenance_log.EngID.default    = auth.user_id
+  db.maintenance_log.Date.default     = request.now
+  db.maintenance_log.SiteID.default   = site
+  db.maintenance_log.MaintenanceID.readable = False
+  db.maintenance_log.MaintenanceID.writable = False
+  
+  # create a form for updating the maintenance log :
+  form = SQLFORM(db.maintenance_log)
+  if form.process().accepted:
+    response.flash = 'log saved'
+  
   # for each available device, give the critical values :
   for d in device:
     dlist.append(d.MACAddress)
+    # get dict of all device logs ordered by deviceID
     rows = db(db.device_log.DeviceID == d.MACAddress).select(db.device_log.ALL, orderby=db.device_log.DeviceID)
-    packets = []
-    first = True
+    packets = []    # packets list for the current device
+    first   = True  # this is the very first log
+    
+    # get info from each device :
     for row in rows:
-      # provide the latest batch of info :
+      # provide only the latest batch of info :
       if first:
         info.append(row.LogInfo)
         first = False
@@ -60,6 +85,13 @@ def logInfo():
       vals = map(int, vals.split(','))
       packets.append(vals[0])
     devicePackets.append(packets)
-  return dict(dlist=dlist, rows=rows, dp=devicePackets, info=info)
+ 
+  return dict(dlist=dlist, rows=rows, dp=devicePackets, 
+              logs=logs, info=info, form=form)
+
+
+
+
+
 
 

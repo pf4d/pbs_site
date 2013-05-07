@@ -88,8 +88,18 @@
 </script>
 <h1>Log Info</h1>
 <ul>
-{{for i,log in zip(range(len(info)), info):}}
-<h3>Device {{=dlist[i]}} :</h3>
-{{=LI(log)}}
+{{for i,inf, in zip(range(len(info)), info):}}
+  <h3>Device {{=dlist[i]}} :</h3>
+  {{=LI(inf)}}
+{{pass}}
+<h1>Create a log</h1>
+{{=form}}
+<h3>Previous logs</h3>
+{{for log in logs:}}
+  {{=LI(B(log.Date), "\n" + log.Report)}}
 {{pass}}
 </ul>
+
+
+
+

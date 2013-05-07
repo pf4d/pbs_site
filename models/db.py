@@ -5,14 +5,11 @@
 ## be redirected to HTTPS, uncomment the line below:
 # request.requires_https()
 
-from dbaccess import *
-db = DAL(database_uri, migrate=False)
+import dbaccess as dba
+db = DAL(dba.database_uri, migrate=False)
 
 ## none otherwise. a pattern can be 'controller/function.extension'
 response.generic_patterns = ['*'] if request.is_local else []
-## (optional) optimize handling of static files
-# response.optimize_css = 'concat,minify,inline'
-# response.optimize_js = 'concat,minify,inline'
 
 #########################################################################
 ## Here is sample code if you need for
@@ -25,7 +22,9 @@ response.generic_patterns = ['*'] if request.is_local else []
 #########################################################################
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
+
 auth = Auth(db)
+# add extra fields not defined by Auth :
 auth.settings.extra_fields['auth_user'] = [Field('username'), Field('phone_number')]
 auth.define_tables(migrate=False, username=True)
 crud, service, plugins = Crud(db), Service(), PluginManager()
@@ -35,13 +34,13 @@ crud, service, plugins = Crud(db), Service(), PluginManager()
 
 ## configure email
 mail = auth.settings.mailer
-mail.settings.server = 'logging' or 'smtp.gmail.com:587'
-mail.settings.sender = 'you@gmail.com'
-mail.settings.login  = 'username:password'
+mail.settings.server = dba.mail_server
+mail.settings.sender = dba.mail_sender
+mail.settings.login  = dba.mail_login
 
 ## configure auth policy
 auth.settings.registration_requires_verification   = False
-auth.settings.registration_requires_approval       = False
+auth.settings.registration_requires_approval       = True
 auth.settings.reset_password_requires_verification = True
 auth.settings.create_user_groups                   = False
 
@@ -66,54 +65,6 @@ use_janrain(auth, filename='private/janrain.key')
 ## >>> rows=db(db.mytable.myfield=='value').select(db.mytable.ALL)
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
-
-#db.define_table('auth_cas',
-#    Field('id','integer'),
-#    Field('user_id','integer'),
-#    Field('created_on','datetime'),
-#    Field('service','string'),
-#    Field('ticket','string'),
-#    Field('renew','string'))
-#
-##--------
-#db.define_table('auth_event',
-#    Field('id','integer'),
-#    Field('time_stamp','datetime'),
-#    Field('client_ip','string'),
-#    Field('user_id','integer'),
-#    Field('origin','string'))
-#
-##--------
-#db.define_table('auth_group',
-#    Field('id','integer'),
-#    Field('role','string'),
-#    Field('description','text'))
-#
-##--------
-#db.define_table('auth_membership',
-#    Field('id','integer'),
-#    Field('user_id','integer'),
-#    Field('group_id','integer'))
-#
-##--------
-#db.define_table('auth_permission',
-#    Field('id','integer'),
-#    Field('group_id','integer'),
-#    Field('name','string'),
-#    Field('table_name','string'),
-#    Field('record_id','integer'))
-#
-##--------
-#db.define_table('auth_user',
-#    Field('id','integer'),
-#    Field('first_name','string'),
-#    Field('last_name','string'),
-#    Field('email','string'),
-#    Field('password','string'),
-#    Field('registration_key','string'),
-#    Field('reset_password_key','string'),
-#    Field('registration_id','string'))
-#--------
 
 db.define_table('device',
     Field('MACAddress','string'),
@@ -222,4 +173,4 @@ auth.enable_record_versioning(db)
 
 mail.settings.server = settings.email_server
 mail.settings.sender = settings.email_sender
-mail.settings.login = settings.email_login
+mail.settings.login  = settings.email_login
