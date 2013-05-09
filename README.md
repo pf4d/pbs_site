@@ -76,4 +76,7 @@ https://github.com/mbostock/d3/wiki/Gallery
 The specific example used for the line plot was based off of this work:
 http://bl.ocks.org/mbostock/3883245
 
+Screenshot
+----------
+
 ![screenshot](https://raw.github.com/pf4d/pbs_site/master/doc/images/pbs_site.png)
