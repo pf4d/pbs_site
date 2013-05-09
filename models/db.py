@@ -34,9 +34,9 @@ crud, service, plugins = Crud(db), Service(), PluginManager()
 
 ## configure email
 mail = auth.settings.mailer
-mail.settings.server = dba.mail_server
-mail.settings.sender = dba.mail_sender
-mail.settings.login  = dba.mail_login
+mail.settings.server = 'logging' or 'smtp.gmail.com:587'
+mail.settings.sender = 'you@gmail.com'
+mail.settings.login  = 'username:password'
 
 ## configure auth policy
 auth.settings.registration_requires_verification   = False

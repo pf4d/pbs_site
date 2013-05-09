@@ -1,4 +1,4 @@
-response.title = settings.title
+response.title = ('PBS Towers')
 response.subtitle = settings.subtitle
 response.meta.author = '%(author)s <%(author_email)s>' % settings
 response.meta.keywords = settings.keywords
