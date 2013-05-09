@@ -68,4 +68,12 @@ The only files which you should need to change (and also that I have changed) ar
 * ```pbs_site/modules/dbaccess.py``` -- secret file for connecting to database and setting up email.
 * ```pbs_site/scripts/extract_mysql_models.py``` -- script for connecting to database and providing web2py database definitions for ```db.py```.
 
+D3.js
+-----
+The software used to plot the socket info is d3.js: 
+https://github.com/mbostock/d3/wiki/Gallery
+
+The specific example used for the line plot was based off of this work:
+http://bl.ocks.org/mbostock/3883245
+
 ![screenshot](https://raw.github.com/pf4d/pbs_site/master/doc/images/pbs_site.png)
