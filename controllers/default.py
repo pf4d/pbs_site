@@ -54,7 +54,8 @@ def manage():
   return dict(grid=grid)
 
 @auth.requires_login()
-@auth.requires_membership('engineer')
+@auth.requires(auth.has_membership('engineer') or
+               auth.has_membership('admin'))
 def logInfo():
   
   # site from link clicked in default/views/sites.html link :
@@ -67,6 +68,7 @@ def logInfo():
   logs   = db().select(db.maintenance_log.ALL, orderby=db.maintenance_log.Date)
  
   devicePackets = [] # total packets sent 
+  times         = [] # time corresponding to packet rate
   info          = [] # current info on device
   dlist         = [] # list of device names (MAC addresses)
 
@@ -88,6 +90,7 @@ def logInfo():
     # get dict of all device logs ordered by deviceID
     rows = db(db.device_log.DeviceID == d.MACAddress).select(db.device_log.ALL, orderby=db.device_log.DeviceID)
     packets = []    # packets list for the current device
+    ts      = []    # times list for the current device
     first   = True  # this is the very first log
     
     # get info from each device :
@@ -99,10 +102,12 @@ def logInfo():
       vals = row.CritVals
       vals = map(int, vals.split(','))
       packets.append(vals[0])
+      ts.append(row.LogDateTime)
     devicePackets.append(packets)
+    times.append(ts)
  
   return dict(dlist=dlist, rows=rows, dp=devicePackets, 
-              logs=logs, info=info, form=form)
+              logs=logs, info=info, form=form, times=times)
 
 
 

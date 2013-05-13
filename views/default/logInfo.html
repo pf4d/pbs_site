@@ -10,16 +10,18 @@
   
   var dlist = {{=XML(response.json(dlist))}} // log info array
   var data  = {{=XML(response.json(dp))}}    // data 2D array
+  var times = {{=XML(response.json(times))}}
   var l     = data.length;                   // number of devices to plot
   
   // create a plot for each device :
   for(var i = 0; i < l; i++)
   {
     var dd   = data[i];                   // x,y coordinates
+    var tt   = times[i];                  // times for x-coord
     var dmax = Math.max.apply(null,dd);   // max y
     var dmin = Math.min.apply(null,dd);   // min y
     var dpad = (dmax - dmin)/10           // padding for scale
-    var dl   = dd.length;                 // lenght of data
+    var dl   = dd.length;                 // length of data
     
     // create x-values :
     for(var j = 0; j < dl; j++)
@@ -31,7 +33,7 @@
     var x = d3.scale.linear().domain([0, dl]).range([0,w]);
     var y = d3.scale.linear().domain([dmin - dpad, dmax + dpad]).range([h,0]);
     
-    // convert a set of coordinates to the line you want using the scales above :
+    // convert a set of coordinates to the line you want using the scales above:
     var line = d3.svg.line()
                  .x(function(d){return x(d[0]);})
                  .y(function(d){return y(d[1]);})
@@ -92,11 +94,13 @@
   <h3>Device {{=dlist[i]}} :</h3>
   {{=LI(inf)}}
 {{pass}}
+{{if auth.has_membership('engineer'):}}
 <h1>Create a log</h1>
 {{=form}}
 <h3>Previous logs</h3>
 {{for log in logs:}}
   {{=LI(B(log.Date), "\n" + log.Report)}}
+{{pass}}
 {{pass}}
 </ul>
 
