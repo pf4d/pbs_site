@@ -3,43 +3,51 @@
           type="text/javascript"></script>
 <div id="map" style="width: 600px; height: 400px;"></div>
 <script type="text/javascript">
-//adapted from gmapSites.html by Tony Matts
-//Places markers onto a Google Map. Color indicates status.
-//Green = Online
-//Red = Offline
-//markers may also serve as link to each one's diagnostic page.
-    
-//To add a location: increase locNum variable by number of locations being added.
-//place location name, latitude, and longitude at bottom of list for each
-//location. Template available below last locations (DON'T delete it).
+
+/* This file pulls Longitude & Latitude values from the controllers/default.py file.
+ * Then those values are added to working and non-working sites, which are then
+ * placed on a Google Map. The adding/deleting of tower sites is done in the
+ * database, not in this file.
+ * Green Marker = Tower site showing no errors in the last 24 hours.
+ * Red Marker = Tower site showing an error in the last 24 hours.
+*/
+
+//arrays for sites that either don't or do show errors.   
 var workingSites = new Array();
 var errorSites = new Array();
 var i=0;
 
+//Grab towers from database that don't show any errors within the last 24 hours
 {{while baseInt < workingNum:}}
 workingSites[i] = ['{{=name[baseInt]}}', {{=lats[baseInt]}}, {{=lngs[baseInt]}}];
 {{baseInt=baseInt+1}}
 i=i+1;
 {{pass}}
 
+//Reinitialize incremental values
 {{baseInt=0}}
-
 i=0;
+
+//Grab tower status from database that show any errors within the last 24 hours
 {{while baseInt < erNum:}}
 errorSites[i] = ['{{=erName[baseInt]}}', {{=erLat[baseInt]}}, {{=erLng[baseInt]}}];
 {{baseInt=baseInt+1}}
 i=i+1;
 {{pass}}
 
+//Create map. Center details where the center of the map is, should this need to
+//be changed if new towers happen to fall outside of this grid.
 var map = new google.maps.Map(document.getElementById('map'), {
         zoom: 6,
         center: new google.maps.LatLng(47.532038, -112.281494),
         mapTypeId: google.maps.MapTypeId.ROADMAP
 });
 
+//create infowindow that pops up when a tower marker on the map is clicked on
 var infowindow = new google.maps.InfoWindow();
 var marker;
 
+//working tower site markers created
 for (var i = 0; i < workingSites.length; i++) {  
         marker = new google.maps.Marker({
         position: new google.maps.LatLng(workingSites[i][1], workingSites[i][2]),
@@ -47,18 +55,19 @@ for (var i = 0; i < workingSites.length; i++) {
         url: 'http://www.montanapbs.org'
 });
 
-//google.maps.event.addListener(marker, 'mouseover', (function(marker, i) {
+//sets up info window for each wroking site
 google.maps.event.addListener(marker, 'click', (function(marker, i) {
         return function() {
         infowindow.setContent(workingSites[i][0]);
         infowindow.open(map, marker);
-        //window.location.href = marker.url;
         }
 })(marker, i));  
 
+//green markers assigned to working tower sites
 marker.setIcon('http://maps.google.com/mapfiles/ms/icons/green-dot.png')               
 }
 
+//tower sites showing errors within the last 24 hours are created
 var errorMarker;
 for (var i = 0; i < errorSites.length; i++) {  
         errorMarker = new google.maps.Marker({
@@ -67,6 +76,7 @@ for (var i = 0; i < errorSites.length; i++) {
         url: 'http://www.montanapbs.org'
 }); 
 
+//red markers assigned to tower sites showing an error within the last 24 hours
 errorMarker.setIcon('http://maps.google.com/mapfiles/ms/icons/red-dot.png')               
 }
 </script>
